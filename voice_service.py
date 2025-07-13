@@ -14,22 +14,24 @@ class VoiceRecognitionService:
     def __init__(self):
         """Inicializar el servicio de reconocimiento de voz"""
         # Configuración para hardware limitado
-        self.max_embeddings_per_speaker = 5  # Limitar embeddings por hablante
-        self.max_speakers = 10  # Limitar número de hablantes
-        self.max_audio_size_mb = 50  # Tamaño máximo de archivo en MB
+        self.max_embeddings_per_speaker = 5
+        self.max_speakers = 10
+        self.max_audio_size_mb = 50
+
+        hf_token = os.environ.get('hf_token')
+        if not hf_token:
+            raise EnvironmentError("❌ No se encontró el token 'hf_token' en las variables de entorno.")
         
         # Cargar modelo de embeddings con configuración optimizada
         try:
             print("🔄 Cargando modelo optimizado para hardware limitado...")
             self.model = Model.from_pretrained(
                 "pyannote/embedding", 
-                use_auth_token="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"
+                use_auth_token=hf_token
             )
-            # Usar ventana más pequeña para reducir memoria
-            self.vec = Inference(self.model, window='sliding', step=0.5)
-            print("✅ Modelo cargado con configuración optimizada")
+            print("✅ Modelo cargado correctamente.")
         except Exception as e:
-            print(f"❌ Error cargando modelo: {e}")
+            print(f"❌ Error al cargar el modelo: {e}")
             raise
         
         # Base de datos dinámica
